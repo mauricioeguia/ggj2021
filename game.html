@@ -3,14 +3,18 @@
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
     <script>      
-	var info = "Hello World\nHola Mundo";
-	var text = new createjs.Text(info, "20px Courier", "#00ff00");
+	var historial = "Hello World\nHola Mundo\n";
+	var linea = "";
+	var text = new createjs.Text(historial, "20px Courier", "#00ff00");
 	var stage;// = new createjs.Stage("demoCanvas");
       function init() {
 		stage = new createjs.Stage("demoCanvas");
 		stage.addChild(text)
         stage.update();
     }
+	function parseCommand(command) {
+		
+	}
 
 	document.onkeyup = function(e) {
 	  if(window.event) { // IE                  
@@ -20,19 +24,20 @@
 	  }
 	  if (keynum === 8)
 	  {
-			info = info.slice(0,-1);
+			linea = linea.slice(0,-1);
 	  }
 	  else if(keynum === 13)
 	  {
-			// send command
+			historial = historial + linea + "\n";
+			// process linea
+			linea = "";
 	  }
 	  else
 	  {
-		  info  = info + String.fromCharCode(keynum);
-		  //alert(info);
+		  linea  = linea + String.fromCharCode(keynum);
 	  }
 	  stage.removeChild(text);
-	  text = new createjs.Text(info, "20px Courier", "#00ff00");
+	  text = new createjs.Text(historial + linea, "20px Courier", "#00ff00");
 	  stage.clear();
 	  stage.addChild(text);
 	  stage.update();
