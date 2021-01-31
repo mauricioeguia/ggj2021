@@ -210,13 +210,19 @@
 		return strIn;
 	}
 
-	document.onkeyup = function(e) {
+	useEventKey = [188,190,189,222,191,186,187]
+	ignoreKeynum = [9,20,16,17,18,91, 93, 33,34,35,36,37,38,39,40,43,44]
+	document.onkeydown = function(e) {
 	  if(window.event) { // IE                  
 		keynum = e.keyCode;
 	  } else if(e.which){ // Netscape/Firefox/Opera                 
 		keynum = e.which;
 	  }
-	  if (keynum === 8)
+	  if(ignoreKeynum.includes(keynum))
+	  {
+		//ignore
+	  }
+	  else if (keynum === 8)
 	  {
 			linea = linea.slice(0,-1);
 	  }
@@ -228,7 +234,15 @@
 	  }
 	  else
 	  {
+		if( useEventKey.includes(keynum))
+		{
+			linea  = linea + e.key;
+		}
+		else
+		{
 		  linea  = linea + String.fromCharCode(keynum).toLowerCase();
+		}
+		  
 	  }
 	  text.text = formatHistorial(historial + path + linea);
 	  stage.clear();
