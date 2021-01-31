@@ -3,6 +3,9 @@
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
     <script> 
+	
+	var relations = {'ball': ['sphere', 'toy', 'throw', 'game equipment'], 'marble': ['rock', 'ball', 'stone'], 'goal': ['end', 'score', 'game equipment'], 'net': ['internet', 'game equipment', 'trap', 'goal'], 'target': ['end', 'sport equipment', 'victim', 'reference', 'place', 'spot', 'goal'], 'purpose': ['end', 'resolution', 'resolve', 'goal'], 'intention': ['end', 'goal'], 'aim': ['end', 'direction', 'way', 'goal'], 'intent': ['end', 'signification', 'significance', 'meaning', 'goal'], 'destination': ['end', 'terminal', 'direction', 'goal'], 'basket': ['container', 'score', 'goal'], 'objective': ['end', 'goal'], 'cage': ['net', 'constraint', 'restraint', 'enclosure'], 'fishnet': ['net'], 'shoe': ['footwear'], 'calceus': ['shoe'], 'sneaker': ['shoe'], 'walker': ['shoe', 'traveler'], 'sandal': ['shoe'], 'footwear': ['wearable', 'clothing', 'wear'], 'boot': ['footwear', 'case', 'shell', 'compartment'], 'overshoe': ['footwear'], 'game equipment': ['equipment'], 'counter': ['game equipment'], 'point': ['end', 'target', 'aim', 'objective', 'score'], 'clothing': ['covering'], 'neckpice': ['clothing'], 'uniform': ['clothing'], 'dress': ['clothing'], 'outwear': ['wearable', 'clothing', 'wear'], 'handwear': ['wearable', 'clothing', 'wear'], 'attire': ['wearable', 'clothing', 'wear'], 'clothes': ['clothing'], 'geaddress': ['clothing'], 'accessory': ['wearable', 'clothing', 'wear'], 'score': ['music', 'number', 'rating', 'evaluation'], 'match': ['duplicate', 'competition', 'counterpart', 'contest', 'score', 'lighter'], 'grade': ['slope', 'rank', 'rating', 'evaluation', 'score'], 'wearable': ['covering'], 'headdress': ['wearable', 'wear'], 'neckpiece': ['wearable', 'wear'], 'will': ['intention', 'intent', 'purpose', 'aim'], 'mind': ['intention', 'intent', 'purpose', 'aim'], 'idea': ['intention', 'intent', 'purpose', 'aim'], 'sake': ['intention', 'intent', 'purpose', 'aim'], 'wear': ['covering'], 'internet': [''], 'business': ['aim', 'objective'], 'track': ['aim'], 'marcher': ['walker'], 'strider': ['walker'], 'hiker': ['walker'], 'passerby': ['walker'], 'parader': ['walker'], 'perseverance': ['purpose'], 'persistence': ['purpose'], 'tenacity': ['purpose'], 'diligence': ['purpose'], 'trap': ['device', 'hazard', 'plan'], 'pitfall': ['trap'], 'pit': ['trap'], 'entaglement': ['trap'], 'web': ['trap'], 'resolution': ['trait', 'papers'], 'decision': ['resolution'], 'determination': ['resolution'], 'stiffness': ['resolution'], 'willpower': ['resolution'], 'end': ['content', 'boundary', 'state', 'bound', 'place', 'sopt'], 'itention': ['end'], 'endpoint': ['end'], 'pole': ['end'], 'entdgame': ['end'], 'termination': ['end'], 'rise': ['grade'], 'upgrade': ['grade'], 'belt': ['accessory'], 'evaluation': ['judgment', 'assessment'], 'marking': ['evaluation'], 'rock': ['crystal']}
+
 	class TreeNode {
 		constructor(value) {
 		this.value = value;
@@ -20,6 +23,7 @@
 	var isPointsAvailable = false;
 	var text = new createjs.Text(historial + path + linea, "20px Courier", "#00ff00");
 	var stage;// = new createjs.Stage("demoCanvas");
+	
     function init() {
 		stage = new createjs.Stage("demoCanvas");
 		stage.addChild(text)
