@@ -15,7 +15,7 @@
 	var dataTree = new TreeNode("root");
 	dataTree.descendants.push(new TreeNode("lostandfound"));
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
-	var historial = " _____                            _    _      _               \n|  ___|                          | |  | |    (_)              \n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _ \n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/ \n                                                              \n _        _              _                                    \n(_)      | |            | |                                   \n _  ___  | |  ___   ___ | |_                                  \n| |/ __| | | / _ \\ / __|| __|                                 \n| |\\__ \\ | || (_) |\\__ \\| |_                                  \n|_||___/ |_| \\___/ |___/ \\__|                                 \n                                                              \n                   _    __                           _        \n                  | |  / _|                         | |       \n  __ _  _ __    __| | | |_   ___   _   _  _ __    __| |       \n / _` || '_ \\  / _` | |  _| / _ \\ | | | || '_ \\  / _` |       \n| (_| || | | || (_| | | |  | (_) || |_| || | | || (_| |       \n \\__,_||_| |_| \\__,_| |_|   \\___/  \\__,_||_| |_| \\__,_|       \n                                                              \n                                                              \n\n\n";
+	var historial = " _____                            _    _      _               \n|  ___|                          | |  | |    (_)              \n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _ \n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/ \n                                                              \n _        _              _                                    \n(_)      | |            | |                                   \n _  ___  | |  ___   ___ | |_                                  \n| |/ __| | | / _ \\ / __|| __|                                 \n| |\\__ \\ | || (_) |\\__ \\| |_                                  \n|_||___/ |_| \\___/ |___/ \\__|                                 \n                                                              \n                   _    __                           _        \n                  | |  / _|                         | |       \n  __ _  _ __    __| | | |_   ___   _   _  _ __    __| |       \n / _` || '_ \\  / _` | |  _| / _ \\ | | | || '_ \\  / _` |       \n| (_| || | | || (_| | | |  | (_) || |_| || | | || (_| |       \n \\__,_||_| |_| \\__,_| |_|   \\___/  \\__,_||_| |_| \\__,_|       \n                                                              \n                                                              \nLAF console 1.0.0\nType 'help' for more information.\n\n\n";
 	var linea = ">";
 	var path ="root/";
 	var isLSAvailable = false;
@@ -23,6 +23,7 @@
 	var isMVAvailable = false;
 	var isPointsAvailable = false;
 	var text = new createjs.Text(historial + path + linea, "20px Courier New", "#00ff00");
+	text.lineHeight = 20
 	var stage;// = new createjs.Stage("demoCanvas");
 	
     function init() {
@@ -130,8 +131,7 @@
 	  {
 		  linea  = linea + String.fromCharCode(keynum).toLowerCase();
 	  }
-	  stage.removeChild(text);
-	  text = new createjs.Text(historial + path + linea, "20px Courier", "#00ff00");
+	  text.text(historial + path + linea)
 	  stage.clear();
 	  stage.addChild(text);
 	  stage.update();
