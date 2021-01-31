@@ -2,60 +2,97 @@
   <head>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
-    <script>      
+    <script> 
+	class TreeNode {
+		constructor(value) {
+		this.value = value;
+		this.descendants = [];
+		}
+	}
+	var dataTree = new TreeNode("root");
+	dataTree.descendants.push(new TreeNode("lostandfound"));
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
 	var linea = ">";
-	var path ="root/";
+	var path ="root\\";
 	var isLSAvailable = false;
 	var isCDAvailable = false;
 	var isMVAvailable = false;
 	var isPointsAvailable = false;
 	var text = new createjs.Text(historial + path + linea, "20px Courier", "#00ff00");
 	var stage;// = new createjs.Stage("demoCanvas");
-      function init() {
+    function init() {
 		stage = new createjs.Stage("demoCanvas");
 		stage.addChild(text)
         stage.update();
     }
+	
+	function fidnNodeInDataTree(pathToCheck, structure)
+	{   if (pathToCheck.slice(0,-1) == structure.value.toLowerCase())
+		{
+			return structure;
+		}
+		else
+		{
+			var firstFolder = pathToCheck.slice(0,pathToCheck.indexOf("\\"));
+			for(var i = 0; i < structure.descendants.length; i++)
+			{
+				if (firstFolder == structure.descendants[i])
+				{
+					return fidnNodeInDataTree(pathToCheck.slice(pathToCheck.indexOf("\\") + 1), structure.descendants[i]);
+				}
+			}
+			return 0;
+		}
+	}
+	
+	function printFoldersAtLocation()
+	{
+		var currentLocation = fidnNodeInDataTree(path, dataTree);
+		if (currentLocation != 0)
+		{
+			currentLocation.descendants.forEach(element =>historial = historial + element.value + " ");
+			historial = historial + "\n";
+		}
+	}
 	function parseCommand(commandLine) {
 		var command = (commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
 		var args = commandLine.substr(commandLine.indexOf(" "));
-		if (command === ">HELP")
+		if (command === ">help")
 		{
 			// shows available commands
-			historial = historial + "\nHELP\nLS lists available folders\n";
+			historial = historial + "\nhelp\nls lists available folders\n";
 			if (isCDAvailable)
 			{
-				historial = historial + "CD concats param path to current path. If param is .. it goes back one level if possible path\n";
+				historial = historial + "cd concats param path to current path. If param is .. it goes back one level if possible path\n";
 			}
 			if (isMVAvailable)
 			{
-				historial = historial + "MV moves folder param1 to param2\n";
+				historial = historial + "mv moves folder param1 to param2\n";
 			}
 			if (isPointsAvailable)
 			{
-				historial = historial + "POINTS shows points\n";
+				historial = historial + "points shows points\n";
 			}
 			
 			isLSAvailable = true;
 		}
-		else if (command === ">CD" && isCDAvailable)
+		else if (command === ">cd" && isCDAvailable)
 		{
 			// todo validate valid path
 			isMVAvailable = true;
-			path = path + args.slice(1);
+			path = path + args.slice(1) + "\\";
 		}
-		else if (command === ">LS" && isLSAvailable)
+		else if (command === ">ls" && isLSAvailable)
 		{
 			isCDAvailable = true;
-			alert("ls");
+			printFoldersAtLocation();
 		}
-		else if (command === ">MV" && isMVAvailable) 
+		else if (command === ">mv" && isMVAvailable) 
 		{
 			isPointsAvailable = true;
 			alert("mv " + args);
 		}
-		else if (command == ">POINTS" && isPointsAvailable)
+		else if (command == ">points" && isPointsAvailable)
 		{
 			var currentPoints = 0; //GetPoints();
 			historial = historial + "Current Points " + currentPoints + "\n";
@@ -80,7 +117,7 @@
 	  }
 	  else
 	  {
-		  linea  = linea + String.fromCharCode(keynum);
+		  linea  = linea + String.fromCharCode(keynum).toLowerCase();
 	  }
 	  stage.removeChild(text);
 	  text = new createjs.Text(historial + path + linea, "20px Courier", "#00ff00");
