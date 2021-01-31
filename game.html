@@ -6,24 +6,44 @@
 	
 	var relations = {'ball': ['sphere', 'toy', 'throw', 'game equipment'], 'marble': ['rock', 'ball', 'stone'], 'goal': ['end', 'score', 'game equipment'], 'net': ['internet', 'game equipment', 'trap', 'goal'], 'target': ['end', 'sport equipment', 'victim', 'reference', 'place', 'spot', 'goal'], 'purpose': ['end', 'resolution', 'resolve', 'goal'], 'intention': ['end', 'goal'], 'aim': ['end', 'direction', 'way', 'goal'], 'intent': ['end', 'signification', 'significance', 'meaning', 'goal'], 'destination': ['end', 'terminal', 'direction', 'goal'], 'basket': ['container', 'score', 'goal'], 'objective': ['end', 'goal'], 'cage': ['net', 'constraint', 'restraint', 'enclosure'], 'fishnet': ['net'], 'shoe': ['footwear'], 'calceus': ['shoe'], 'sneaker': ['shoe'], 'walker': ['shoe', 'traveler'], 'sandal': ['shoe'], 'footwear': ['wearable', 'clothing', 'wear'], 'boot': ['footwear', 'case', 'shell', 'compartment'], 'overshoe': ['footwear'], 'game equipment': ['equipment'], 'counter': ['game equipment'], 'point': ['end', 'target', 'aim', 'objective', 'score'], 'clothing': ['covering'], 'neckpice': ['clothing'], 'uniform': ['clothing'], 'dress': ['clothing'], 'outwear': ['wearable', 'clothing', 'wear'], 'handwear': ['wearable', 'clothing', 'wear'], 'attire': ['wearable', 'clothing', 'wear'], 'clothes': ['clothing'], 'geaddress': ['clothing'], 'accessory': ['wearable', 'clothing', 'wear'], 'score': ['music', 'number', 'rating', 'evaluation'], 'match': ['duplicate', 'competition', 'counterpart', 'contest', 'score', 'lighter'], 'grade': ['slope', 'rank', 'rating', 'evaluation', 'score'], 'wearable': ['covering'], 'headdress': ['wearable', 'wear'], 'neckpiece': ['wearable', 'wear'], 'will': ['intention', 'intent', 'purpose', 'aim'], 'mind': ['intention', 'intent', 'purpose', 'aim'], 'idea': ['intention', 'intent', 'purpose', 'aim'], 'sake': ['intention', 'intent', 'purpose', 'aim'], 'wear': ['covering'], 'internet': [''], 'business': ['aim', 'objective'], 'track': ['aim'], 'marcher': ['walker'], 'strider': ['walker'], 'hiker': ['walker'], 'passerby': ['walker'], 'parader': ['walker'], 'perseverance': ['purpose'], 'persistence': ['purpose'], 'tenacity': ['purpose'], 'diligence': ['purpose'], 'trap': ['device', 'hazard', 'plan'], 'pitfall': ['trap'], 'pit': ['trap'], 'entaglement': ['trap'], 'web': ['trap'], 'resolution': ['trait', 'papers'], 'decision': ['resolution'], 'determination': ['resolution'], 'stiffness': ['resolution'], 'willpower': ['resolution'], 'end': ['content', 'boundary', 'state', 'bound', 'place', 'sopt'], 'itention': ['end'], 'endpoint': ['end'], 'pole': ['end'], 'entdgame': ['end'], 'termination': ['end'], 'rise': ['grade'], 'upgrade': ['grade'], 'belt': ['accessory'], 'evaluation': ['judgment', 'assessment'], 'marking': ['evaluation'], 'rock': ['crystal']}
 
-	class TreeNode {
-		constructor(value) {
-		this.value = value;
-		this.descendants = [];
+	class TreeNode
+	{
+		constructor(value, parent)
+		{
+			this.value = value;
+			this.descendants = [];
+			this.parent = parent
+		}
+		
+		getAbsPath()
+		{
+			if( this.parent != undefined)
+			{
+				return this.parent.getAbsPath()+this.value+"/";
+			}
+			else
+			{
+				return this.value;
+			}
 		}
 	}
-	var dataTree = new TreeNode("root");
-	dataTree.descendants.push(new TreeNode("lostandfound"));
+	var dataTree = new TreeNode("/");
+	var currentDir = dataTree
+	var lostAndFoundFolder = new TreeNode("lostandfound", dataTree)
+	dataTree.descendants.push(lostAndFoundFolder );
+	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
-	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nLAF (Lost And Found) console 1.0.0\nType 'help' for more information.\n\n";
+	var historial = ""//" _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nLAF console 1.0.0\nType 'help' for more information.\n\n";
 	var linea = ">";
-	var path ="root/";
+	var path ="/";
 	var isLSAvailable = false;
+	var isPWDAvailable = false;
 	var isCDAvailable = false;
 	var isMVAvailable = false;
-	var isPointsAvailable = false;
+	var isPointsAvailable = false
 	var text = new createjs.Text(historial + path + linea, "20px Courier New", "#00ff00");
-	text.lineHeight = 20
+	text.lineHeight = 20;
+	text.lineWidth=800
 	var stage;// = new createjs.Stage("demoCanvas");
 	
     function init() {
@@ -32,33 +52,51 @@
         stage.update();
     }
 	
-	function fidnNodeInDataTree(pathToCheck, structure)
-	{   if (pathToCheck.slice(0,-1) == structure.value.toLowerCase())
+	function findNodeInDataTree(pathToCheck, structure)
+	{
+		var folderList = pathToCheck.split("/");
+		if( pathToCheck.charAt(pathToCheck.length-1) === '/')
 		{
-			return structure;
+			//the last element is empty
+			folderList.pop();
 		}
-		else
+		
+		if( pathToCheck.charAt(0) == "/")
 		{
-			var firstFolder = pathToCheck.slice(0,pathToCheck.indexOf("/"));
-			for(var i = 0; i < structure.descendants.length; i++)
-			{
-				if (firstFolder == structure.descendants[i])
-				{
-					return fidnNodeInDataTree(pathToCheck.slice(pathToCheck.indexOf("/") + 1), structure.descendants[i]);
-				}
-			}
-			return 0;
+			//absolute path
+			folderList[0] = dataTree.value;
 		}
+		
+		if( folderList[0] !== structure.value)
+		{
+			//the path is not relative to the folder
+			return undefined;
+		}
+		
+		var currentFolder = structure;
+		for (var i = 1; i < folderList.length && currentFolder != undefined ; i++)
+		{
+			currentFolder = currentFolder.descendants.find(elem => elem.value == folderList[i])
+		}
+		
+		return currentFolder
 	}
 	
 	function printFoldersAtLocation()
 	{
-		var currentLocation = fidnNodeInDataTree(path, dataTree);
-		if (currentLocation != 0)
+		var currentLocation = findNodeInDataTree(path, dataTree);
+		if (currentLocation != undefined)
 		{
-			currentLocation.descendants.forEach(element =>historial = historial + element.value + " ");
-			historial = historial + "\n";
+			currentLocation.descendants.forEach(element =>addToHistorial(element.value + "\t"));
 		}
+		addToHistorial("\n\n");
+	}
+	function printPath()
+	{
+		addToHistorial(currentDir.getAbsPath()+"\n\n")
+		//strPath = "/";
+		//currentDir = 
+		//dataTree
 	}
 	function parseCommand(commandLine) {
 		var command = (commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
@@ -66,29 +104,60 @@
 		if (command === ">help")
 		{
 			// shows available commands
-			historial = historial + "\nhelp\t\tDisplays this message\nls\t\t\t\tList information about the FILEs in the current directory\n";
+			addToHistorial( "\nhelp\t\tDisplays this message\nls\t\t\t\tList information about the FILEs in the current directory\n");
 			if (isCDAvailable)
 			{
-				historial = historial + "cd concats param path to current path. If param is .. it goes back one level if possible path\n";
+				addToHistorial("cd concats param path to current path. If param is .. it goes back one level if possible path\n");
 			}
 			if (isMVAvailable)
 			{
-				historial = historial + "mv moves folder param1 to param2\n";
+				addToHistorial("mv moves folder param1 to param2\n");
 			}
 			if (isPointsAvailable)
 			{
-				historial = historial + "points shows points\n";
+				addToHistorial("points shows points\n");
 			}
 			
-			historial = historial + "\n";
+			addToHistorial("\n");
 			
 			isLSAvailable = true;
+			isPWDAvailable = true;
+		}
+		else if (command === ">pwd" && isPWDAvailable)
+		{
+			printPath();
 		}
 		else if (command === ">cd" && isCDAvailable)
 		{
-			// todo validate valid path
+			var commandBaseDir = undefined
+			var tmpPath = undefined
+
+			if( args.charAt(1) == "/" )
+			{
+				//absolute path
+				commandBaseDir = dataTree;
+				tmpPath = args.slice(1) + "/";
+			}
+			else
+			{
+				//relative path
+				commandBaseDir = currentDir;
+				tmpPath = path + args.slice(1) + "/";
+			}
+
+			var tmpDir = findNodeInDataTree(tmpPath, dataTree)
+			
+			if (tmpDir == undefined)
+			{
+				addToHistorial("Unknown folder\n");
+			}
+			else
+			{
+				currentDir = tmpDir;
+				path = currentDir.getAbsPath();//args.slice(1)
+			}
+			
 			isMVAvailable = true;
-			path = path + args.slice(1) + "/";
 		}
 		else if (command === ">ls" && isLSAvailable)
 		{
@@ -102,13 +171,43 @@
 		}
 		else if (command == ">points" && isPointsAvailable)
 		{
-			var currentPoints = 0; //GetPoints();
-			historial = historial + "Current Points " + currentPoints + "\n";
+			var currentPoints = GetPoints();
+			addToHistorial("Current Points " + currentPoints + "\n");
 		}
 		else
 		{
-			historial = historial + "Unknown command\n\n";
+			addToHistorial("Unknown command\n\n");
 		}
+	}
+	
+	function initLostAndFoundFolder(treeNode)
+	{
+		
+		treeNode.descendants.push(new TreeNode("a", treeNode));
+		treeNode.descendants.push(new TreeNode("b", treeNode));
+		treeNode.descendants.push(new TreeNode("c", treeNode));
+	}
+	
+	function GetPoints()
+	{
+		var todoNodes = [...dataTree.descendants]
+		
+		console.log(todoNodes)
+		
+	}
+	
+	function addToHistorial(strIn)
+	{
+		historial = historial + strIn
+	}
+	
+	function formatHistorial(strIn)
+	{
+		//console.log(text.x, text.y, text.width, text.height)
+		
+		//console.log(text)
+		//console.log("getBounds",text.getBounds())
+		return strIn;
 	}
 
 	document.onkeyup = function(e) {
@@ -123,7 +222,7 @@
 	  }
 	  else if(keynum === 13)
 	  {
-			historial = historial + linea + "\n";
+			addToHistorial( path+linea + "\n");
 			parseCommand(linea);
 			linea = ">";
 	  }
@@ -131,7 +230,7 @@
 	  {
 		  linea  = linea + String.fromCharCode(keynum).toLowerCase();
 	  }
-	  text.text(historial + path + linea)
+	  text.text = formatHistorial(historial + path + linea);
 	  stage.clear();
 	  stage.addChild(text);
 	  stage.update();
