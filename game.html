@@ -4,16 +4,57 @@
 	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
     <script>      
 	var historial = "Hello World\nHola Mundo\n";
-	var linea = "";
-	var text = new createjs.Text(historial, "20px Courier", "#00ff00");
+	var linea = ">";
+	var isLSAvailable = false;
+	var isCDAvailable = false;
+	var isMVAvailable = false;
+	var isPointsAvailable = false;
+	var text = new createjs.Text(historial + linea, "20px Courier", "#00ff00");
 	var stage;// = new createjs.Stage("demoCanvas");
       function init() {
 		stage = new createjs.Stage("demoCanvas");
 		stage.addChild(text)
         stage.update();
     }
-	function parseCommand(command) {
-		
+	function parseCommand(commandLine) {
+		var command = (commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
+		var args = commandLine.substr(commandLine.indexOf(" "));
+		if (command === ">HELP")
+		{
+			// shows available commands
+			historial = historial + "\nHELP\nLS lists available folders\n";
+			if (isCDAvailable)
+			{
+				historial = historial + "CD moves to specified path\n";
+			}
+			if (isMVAvailable)
+			{
+				historial = historial + "MV moves folder param1 to param2\n";
+			}
+			if (isPointsAvailable)
+			{
+				historial = historial + "POINTS shows points\n";
+			}
+			
+			isLSAvailable = true;
+		}
+		else if (command === ">CD" && isCDAvailable)
+		{
+			
+		}
+		else if (command === ">LS" && isLSAvailable)
+		{
+			isCDAvailable = true;
+			alert("ls");
+		}
+		else if (command === ">MV" && isMVAvailable) 
+		{
+			alert("mv " + args);
+		}
+		else if (command == ">POINTS" && isPointsAvailable)
+		{
+			alert("points");
+		}
 	}
 
 	document.onkeyup = function(e) {
@@ -29,8 +70,8 @@
 	  else if(keynum === 13)
 	  {
 			historial = historial + linea + "\n";
-			// process linea
-			linea = "";
+			parseCommand(linea);
+			linea = ">";
 	  }
 	  else
 	  {
