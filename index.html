@@ -2,7 +2,7 @@
   <head>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
-	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
+
     <script> 
 	
 	var relations = {'ball': ['sphere', 'toy', 'throw', 'game equipment'], 'marble': ['rock', 'ball', 'stone'], 'goal': ['end', 'score', 'game equipment'], 'net': ['internet', 'game equipment', 'trap', 'goal'], 'target': ['end', 'sport equipment', 'victim', 'reference', 'place', 'spot', 'goal'], 'purpose': ['end', 'resolution', 'resolve', 'goal'], 'intention': ['end', 'goal'], 'aim': ['end', 'direction', 'way', 'goal'], 'intent': ['end', 'signification', 'significance', 'meaning', 'goal'], 'destination': ['end', 'terminal', 'direction', 'goal'], 'basket': ['container', 'score', 'goal'], 'objective': ['end', 'goal'], 'cage': ['net', 'constraint', 'restraint', 'enclosure'], 'fishnet': ['net'], 'shoe': ['footwear'], 'calceus': ['shoe'], 'sneaker': ['shoe'], 'walker': ['shoe', 'traveler'], 'sandal': ['shoe'], 'footwear': ['wearable', 'clothing', 'wear'], 'boot': ['footwear', 'case', 'shell', 'compartment'], 'overshoe': ['footwear'], 'game equipment': ['equipment'], 'counter': ['game equipment'], 'point': ['end', 'target', 'aim', 'objective', 'score'], 'clothing': ['covering'], 'neckpice': ['clothing'], 'uniform': ['clothing'], 'dress': ['clothing'], 'outwear': ['wearable', 'clothing', 'wear'], 'handwear': ['wearable', 'clothing', 'wear'], 'attire': ['wearable', 'clothing', 'wear'], 'clothes': ['clothing'], 'geaddress': ['clothing'], 'accessory': ['wearable', 'clothing', 'wear'], 'score': ['music', 'number', 'rating', 'evaluation'], 'match': ['duplicate', 'competition', 'counterpart', 'contest', 'score', 'lighter'], 'grade': ['slope', 'rank', 'rating', 'evaluation', 'score'], 'wearable': ['covering'], 'headdress': ['wearable', 'wear'], 'neckpiece': ['wearable', 'wear'], 'will': ['intention', 'intent', 'purpose', 'aim'], 'mind': ['intention', 'intent', 'purpose', 'aim'], 'idea': ['intention', 'intent', 'purpose', 'aim'], 'sake': ['intention', 'intent', 'purpose', 'aim'], 'wear': ['covering'], 'internet': [''], 'business': ['aim', 'objective'], 'track': ['aim'], 'marcher': ['walker'], 'strider': ['walker'], 'hiker': ['walker'], 'passerby': ['walker'], 'parader': ['walker'], 'perseverance': ['purpose'], 'persistence': ['purpose'], 'tenacity': ['purpose'], 'diligence': ['purpose'], 'trap': ['device', 'hazard', 'plan'], 'pitfall': ['trap'], 'pit': ['trap'], 'entaglement': ['trap'], 'web': ['trap'], 'resolution': ['trait', 'papers'], 'decision': ['resolution'], 'determination': ['resolution'], 'stiffness': ['resolution'], 'willpower': ['resolution'], 'end': ['content', 'boundary', 'state', 'bound', 'place', 'sopt'], 'itention': ['end'], 'endpoint': ['end'], 'pole': ['end'], 'entdgame': ['end'], 'termination': ['end'], 'rise': ['grade'], 'upgrade': ['grade'], 'belt': ['accessory'], 'evaluation': ['judgment', 'assessment'], 'marking': ['evaluation'], 'rock': ['crystal']}
@@ -57,12 +57,12 @@
 	dataTree.descendants.push(lostAndFoundFolder );
 	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
-	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nEILAF O.S. 1.0.0\nType 'help' for more information.\n\n";
+	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nGGJConsole O.S. 2.0.21\nType 'help' for more information.\n\n";
 	var prompt = ">";
 	var linea = "";
 	var path ="/";
 	var isLSAvailable = false;
-	var isPWDAvailable = false;
+//	var isPWDAvailable = false;
 	var isCDAvailable = false;
 	var isMVAvailable = false;
 	var isPointsAvailable = false
@@ -170,6 +170,37 @@
 		//return Math.max(0, matchList.filter(arg => arg != "").length-2);
 		return Math.max(0, matchList.filter(arg => ((arg != "") && (arg != undefined))).length-2);
 	}
+	function printHelp(helpDict)
+	{
+		var minSpace = 3
+		var maxVerticalAlign = 10
+		var keyLength = 0
+		var spaces = "                         ";
+		for( key in helpDict)
+		{
+			keyLength = Math.max(keyLength, key.length)
+		}
+		
+		var vertAlign = Math.max(keyLength+minSpace, maxVerticalAlign)
+
+		var re = new RegExp(".{1,"+(66-vertAlign)+"}(\s|$)","g");
+		for( key in helpDict)
+		{
+			var splitedLine = helpDict[key].match(re);
+			for( var index = 0; index < splitedLine.length; index++)
+			{
+				if( index == 0)
+				{
+					addToHistorial(key+spaces.slice(0,vertAlign-key.length)+splitedLine[index]+"\n");
+				}
+				else
+				{
+					addToHistorial(spaces.slice(0,vertAlign)+splitedLine[index]+"\n");
+				}
+			}
+		}
+		addToHistorial("\n")
+	}
 	function parseCommand(commandLine) {
 		var re = /\s*(\b\w*\b)\s*(-?\.?\.?\/?(?:\b[^ ]*\b)?\/?)?\s*(-?\.?\.?\/?(?:\b[^ ]*\b)?\/?)?\s*(.*)/g;
 		var argsList = [...commandLine.matchAll(re)][0]
@@ -190,52 +221,55 @@
 			}
 			else
 			{
+				helpDict = {}
+
 				// shows available commands
-				addToHistorial( "\nhelp\t\tDisplays this message\n");
-				
+				helpDict["help"] = "Displays this message"
+
 				if (isLSAvailable)
 				{
-					addToHistorial("ls\t\t\t\tList information about the FILEs in the current directory\n");
+					helpDict["ls"] = "List information about the FILEs in the current directory.";
+
 				}
-				if (isPWDAvailable)
-				{
-					addToHistorial("pwd\t\t\t\tPrint the name of the current working directory.\n");
-				}
+//				if (isPWDAvailable)
+//				{
+//					helpDict["pwd"] = "Print the name of the current working directory.";
+//					//addToHistorial("pwd\t\t\t\tPrint the name of the current working directory.\n");
+//				}
 				if (isCDAvailable)
 				{
-					addToHistorial("cd Change the current directory.\n");
+					helpDict["cd"] = "Change the current directory.";
 				}
 				if (isMVAvailable)
 				{
-					addToHistorial("mv moves folder param1 to param2\n");
+					helpDict["mv"] = "move folder SRC to DST";
 				}
 				if (isPointsAvailable)
 				{
-					addToHistorial("points shows points\n");
+					helpDict["ls"] = "List information about the FILEs in the current directory";
 				}
 				
-				addToHistorial("\n");
+				printHelp(helpDict)
 				
 				if( !isLSAvailable)
 				{
 					addToHistorial("[[ UNLOCKED: <ls> command ]]\n");
-					addToHistorial("[[ UNLOCKED: <pwd> command ]]\n\n");
 				}
 				isLSAvailable = true;
-				isPWDAvailable = true;
+//				isPWDAvailable = true;
 			}
 		}
-		else if (command == "pwd" && isPWDAvailable)
-		{
-			if( argsCount != 0)
-			{
-				addToHistorial("Usage: pwd\n\n");
-			}
-			else
-			{
-				printPath();
-			}
-		}
+//		else if (command == "pwd" && isPWDAvailable)
+//		{
+//			if( argsCount != 0)
+//			{
+//				addToHistorial("Usage: pwd\n\n");
+//			}
+//			else
+//			{
+//				printPath();
+//			}
+//		}
 		else if (command == "cd" && isCDAvailable)
 		{
 			if( argsCount != 1)
@@ -294,7 +328,7 @@
 		{
 			if( argsCount != 2)
 			{
-				addToHistorial("Usage: mv <SOURCE> <DIRECTORY>\n\n");
+				addToHistorial("Usage: mv <SRC> <DST>\n\n");
 			}
 			else
 			{
