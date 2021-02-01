@@ -2,6 +2,7 @@
   <head>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
 	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
+	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
     <script> 
 	
 	var relations = {'ball': ['sphere', 'toy', 'throw', 'game equipment'], 'marble': ['rock', 'ball', 'stone'], 'goal': ['end', 'score', 'game equipment'], 'net': ['internet', 'game equipment', 'trap', 'goal'], 'target': ['end', 'sport equipment', 'victim', 'reference', 'place', 'spot', 'goal'], 'purpose': ['end', 'resolution', 'resolve', 'goal'], 'intention': ['end', 'goal'], 'aim': ['end', 'direction', 'way', 'goal'], 'intent': ['end', 'signification', 'significance', 'meaning', 'goal'], 'destination': ['end', 'terminal', 'direction', 'goal'], 'basket': ['container', 'score', 'goal'], 'objective': ['end', 'goal'], 'cage': ['net', 'constraint', 'restraint', 'enclosure'], 'fishnet': ['net'], 'shoe': ['footwear'], 'calceus': ['shoe'], 'sneaker': ['shoe'], 'walker': ['shoe', 'traveler'], 'sandal': ['shoe'], 'footwear': ['wearable', 'clothing', 'wear'], 'boot': ['footwear', 'case', 'shell', 'compartment'], 'overshoe': ['footwear'], 'game equipment': ['equipment'], 'counter': ['game equipment'], 'point': ['end', 'target', 'aim', 'objective', 'score'], 'clothing': ['covering'], 'neckpice': ['clothing'], 'uniform': ['clothing'], 'dress': ['clothing'], 'outwear': ['wearable', 'clothing', 'wear'], 'handwear': ['wearable', 'clothing', 'wear'], 'attire': ['wearable', 'clothing', 'wear'], 'clothes': ['clothing'], 'geaddress': ['clothing'], 'accessory': ['wearable', 'clothing', 'wear'], 'score': ['music', 'number', 'rating', 'evaluation'], 'match': ['duplicate', 'competition', 'counterpart', 'contest', 'score', 'lighter'], 'grade': ['slope', 'rank', 'rating', 'evaluation', 'score'], 'wearable': ['covering'], 'headdress': ['wearable', 'wear'], 'neckpiece': ['wearable', 'wear'], 'will': ['intention', 'intent', 'purpose', 'aim'], 'mind': ['intention', 'intent', 'purpose', 'aim'], 'idea': ['intention', 'intent', 'purpose', 'aim'], 'sake': ['intention', 'intent', 'purpose', 'aim'], 'wear': ['covering'], 'internet': [''], 'business': ['aim', 'objective'], 'track': ['aim'], 'marcher': ['walker'], 'strider': ['walker'], 'hiker': ['walker'], 'passerby': ['walker'], 'parader': ['walker'], 'perseverance': ['purpose'], 'persistence': ['purpose'], 'tenacity': ['purpose'], 'diligence': ['purpose'], 'trap': ['device', 'hazard', 'plan'], 'pitfall': ['trap'], 'pit': ['trap'], 'entaglement': ['trap'], 'web': ['trap'], 'resolution': ['trait', 'papers'], 'decision': ['resolution'], 'determination': ['resolution'], 'stiffness': ['resolution'], 'willpower': ['resolution'], 'end': ['content', 'boundary', 'state', 'bound', 'place', 'sopt'], 'itention': ['end'], 'endpoint': ['end'], 'pole': ['end'], 'entdgame': ['end'], 'termination': ['end'], 'rise': ['grade'], 'upgrade': ['grade'], 'belt': ['accessory'], 'evaluation': ['judgment', 'assessment'], 'marking': ['evaluation'], 'rock': ['crystal']}
@@ -27,13 +28,14 @@
 			}
 		}
 	}
+	var canvas = null;
 	var dataTree = new TreeNode("/");
 	var currentDir = dataTree
 	var lostAndFoundFolder = new TreeNode("lostandfound", dataTree)
 	dataTree.descendants.push(lostAndFoundFolder );
 	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
-	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nLAF console 1.0.0\nType 'help' for more information.\n\n";
+	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nEILAF console 1.0.0\nType 'help' for more information.\n\n";
 	var prompt = ">";
 	var linea = "";
 	var path ="/";
@@ -44,13 +46,18 @@
 	var isPointsAvailable = false
 	var text = new createjs.Text(historial + path + prompt + linea, "20px Courier New", "#00ff00");
 	text.lineHeight = 20;
-	text.lineWidth=800
 	var stage;// = new createjs.Stage("demoCanvas");
-	
+	var sfxIds =["keyboard-01","keyboard-02","keyboard-03","keyboard-04","keyboard-05","keyboard-06","keyboard-07","keyboard-08","keyboard-09","keyboard-10"]
+
+
     function init() {
+		canvas = document.getElementById('demoCanvas')
+		text.lineWidth = canvas.width
 		stage = new createjs.Stage("demoCanvas");
 		stage.addChild(text)
         stage.update();
+		
+		sfxIds.forEach(id => createjs.Sound.registerSound("sounds/"+id+".mp3", id))
     }
 	
 	function findNodeInDataTree(pathToCheck, structure)
@@ -107,6 +114,11 @@
 	function parseCommand(commandLine) {
 		var re = /\s*(\b\w*\b)\s*(\b.*\b)\s*(\b.*\b)\s*(\b.*\b)/g;
 		var argsList = [...commandLine.matchAll(re)][0]
+		if( argsList == undefined)
+		{
+			addToHistorial("Unknown command\n\n");
+			return;
+		}
 
 		var argsCount = countArguments(argsList)
 		var command = argsList[1]//(commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
@@ -120,7 +132,16 @@
 			else
 			{
 				// shows available commands
-				addToHistorial( "\nhelp\t\tDisplays this message\nls\t\t\t\tList information about the FILEs in the current directory\n");
+				addToHistorial( "\nhelp\t\tDisplays this message\n");
+				
+				if (isLSAvailable)
+				{
+					addToHistorial("ls\t\t\t\tList information about the FILEs in the current directory\n");
+				}
+				if (isPWDAvailable)
+				{
+					addToHistorial("pwd\t\t\t\tPrint the name of the current working directory.\n");
+				}
 				if (isCDAvailable)
 				{
 					addToHistorial("cd Change the current directory.\n");
@@ -136,6 +157,11 @@
 				
 				addToHistorial("\n");
 				
+				if( !isLSAvailable)
+				{
+					addToHistorial("[[ UNLOCKED: <ls> command ]]\n");
+					addToHistorial("[[ UNLOCKED: <pwd> command ]]\n\n");
+				}
 				isLSAvailable = true;
 				isPWDAvailable = true;
 			}
@@ -187,6 +213,11 @@
 					path = currentDir.getAbsPath();
 				}
 				
+				if( !isMVAvailable)
+				{
+					addToHistorial("[[ UNLOCKED: <mv> command ]]\n\n");
+				}
+
 				isMVAvailable = true;
 			}
 		}
@@ -198,8 +229,13 @@
 			}
 			else
 			{
-				isCDAvailable = true;
 				printFoldersAtLocation();
+
+				if( !isCDAvailable)
+				{
+					addToHistorial("[[ UNLOCKED: <cd> command ]]\n\n");
+				}
+				isCDAvailable = true;
 			}
 		}
 		else if (command == "mv" && isMVAvailable) 
@@ -210,8 +246,13 @@
 			}
 			else
 			{
-				isPointsAvailable = true;
 				alert("mv " + args);
+
+				if( !isPointsAvailable)
+				{
+					addToHistorial("[[ UNLOCKED: <points> command ]]\n\n");
+				}
+				isPointsAvailable = true;
 			}
 		}
 		else if (command == "points" && isPointsAvailable)
@@ -253,57 +294,64 @@
 		historial = historial + strIn
 	}
 	
-	function formatHistorial(strIn)
+	function formatHistorial(textElem, strIn)
 	{
-		//console.log(text.x, text.y, text.width, text.height)
+		textElem.text = strIn
+		var bounds = text.getBounds()
+
+		lines = strIn.split("\n")
 		
-		//console.log(text)
-		//console.log("getBounds",text.getBounds())
+		if( bounds.width > canvas.width)
+		{
+			// iterate and break the long line-height
+		}
+
+		while(bounds.height > canvas.height)
+		{
+			lines.splice(0,1)
+			textElem.text = lines.join("\n")
+			bounds = text.getBounds()
+		}
+
 		return strIn;
 	}
 
-	useEventKey = [188,190,189,222,191,186,187]
-	ignoreKeynum = [9,20,16,17,18,91, 93, 33,34,35,36,37,38,39,40,43,44]
-	document.onkeydown = function(e) {
+	document.onkeydown = function(e)
+	{
 	  if(window.event) { // IE                  
 		keynum = e.keyCode;
 	  } else if(e.which){ // Netscape/Firefox/Opera                 
 		keynum = e.which;
 	  }
-	  if(ignoreKeynum.includes(keynum))
+	if (keynum == 8)
 	  {
-		//ignore
-	  }
-	  else if (keynum == 8)
-	  {
-			linea = linea.slice(0,-1);
+		linea = linea.slice(0,-1);
+			createjs.Sound.play(sfxIds[sfxIds.length-1]);
 	  }
 	  else if(keynum == 13)
 	  {
 			addToHistorial( path+prompt+linea + "\n");
 			parseCommand(linea);
 			linea = "";
+			createjs.Sound.play(sfxIds[sfxIds.length-1]);
 	  }
 	  else
 	  {
-		if( useEventKey.includes(keynum))
+		if( e.key.length == 1)
 		{
-			linea  = linea + e.key;
+		  linea  = linea + e.key;
 		}
-		else
-		{
-		  linea  = linea + String.fromCharCode(keynum).toLowerCase();
-		}
+		  var soundId = sfxIds[Math.floor(Math.random() * sfxIds.length)];
 		  
+		  createjs.Sound.play(soundId);
 	  }
-	  text.text = formatHistorial(historial + path +prompt+ linea);
+	  formatHistorial(text, historial + path +prompt+ linea);
 	  stage.clear();
 	  stage.addChild(text);
 	  stage.update();
+	  
 	}
     </script>
-	
-	
   </head>
   <body onload="init();"  id="char" bgcolor=black>
     <canvas id="demoCanvas" width="800" height="600"></canvas>
