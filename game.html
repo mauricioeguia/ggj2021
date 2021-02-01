@@ -34,14 +34,15 @@
 	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
 	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nLAF console 1.0.0\nType 'help' for more information.\n\n";
-	var linea = ">";
+	var prompt = ">";
+	var linea = "";
 	var path ="/";
 	var isLSAvailable = false;
 	var isPWDAvailable = false;
 	var isCDAvailable = false;
 	var isMVAvailable = false;
 	var isPointsAvailable = false
-	var text = new createjs.Text(historial + path + linea, "20px Courier New", "#00ff00");
+	var text = new createjs.Text(historial + path + prompt + linea, "20px Courier New", "#00ff00");
 	text.lineHeight = 20;
 	text.lineWidth=800
 	var stage;// = new createjs.Stage("demoCanvas");
@@ -55,7 +56,7 @@
 	function findNodeInDataTree(pathToCheck, structure)
 	{
 		var folderList = pathToCheck.split("/");
-		if( pathToCheck.charAt(pathToCheck.length-1) === '/')
+		if( pathToCheck.charAt(pathToCheck.length-1) == '/')
 		{
 			//the last element is empty
 			folderList.pop();
@@ -98,81 +99,132 @@
 		//currentDir = 
 		//dataTree
 	}
+	
+	function countArguments(matchList)
+	{
+		return Math.max(0, matchList.filter(arg => arg != "").length-2);
+	}
 	function parseCommand(commandLine) {
-		var command = (commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
+		var re = /\s*(\b\w*\b)\s*(\b.*\b)\s*(\b.*\b)\s*(\b.*\b)/g;
+		var argsList = [...commandLine.matchAll(re)][0]
+
+		var argsCount = countArguments(argsList)
+		var command = argsList[1]//(commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
 		var args = commandLine.substr(commandLine.indexOf(" "));
-		if (command === ">help")
+		if (command == "help")
 		{
-			// shows available commands
-			addToHistorial( "\nhelp\t\tDisplays this message\nls\t\t\t\tList information about the FILEs in the current directory\n");
-			if (isCDAvailable)
+			if( argsCount != 0)
 			{
-				addToHistorial("cd concats param path to current path. If param is .. it goes back one level if possible path\n");
-			}
-			if (isMVAvailable)
-			{
-				addToHistorial("mv moves folder param1 to param2\n");
-			}
-			if (isPointsAvailable)
-			{
-				addToHistorial("points shows points\n");
-			}
-			
-			addToHistorial("\n");
-			
-			isLSAvailable = true;
-			isPWDAvailable = true;
-		}
-		else if (command === ">pwd" && isPWDAvailable)
-		{
-			printPath();
-		}
-		else if (command === ">cd" && isCDAvailable)
-		{
-			var commandBaseDir = undefined
-			var tmpPath = undefined
-
-			if( args.charAt(1) == "/" )
-			{
-				//absolute path
-				commandBaseDir = dataTree;
-				tmpPath = args.slice(1) + "/";
+				addToHistorial("Usage: help\n\n");
 			}
 			else
 			{
-				//relative path
-				commandBaseDir = currentDir;
-				tmpPath = path + args.slice(1) + "/";
+				// shows available commands
+				addToHistorial( "\nhelp\t\tDisplays this message\nls\t\t\t\tList information about the FILEs in the current directory\n");
+				if (isCDAvailable)
+				{
+					addToHistorial("cd Change the current directory.\n");
+				}
+				if (isMVAvailable)
+				{
+					addToHistorial("mv moves folder param1 to param2\n");
+				}
+				if (isPointsAvailable)
+				{
+					addToHistorial("points shows points\n");
+				}
+				
+				addToHistorial("\n");
+				
+				isLSAvailable = true;
+				isPWDAvailable = true;
 			}
-
-			var tmpDir = findNodeInDataTree(tmpPath, dataTree)
-			
-			if (tmpDir == undefined)
+		}
+		else if (command == "pwd" && isPWDAvailable)
+		{
+			if( argsCount != 0)
 			{
-				addToHistorial("Unknown folder\n");
+				addToHistorial("Usage: pwd\n\n");
 			}
 			else
 			{
-				currentDir = tmpDir;
-				path = currentDir.getAbsPath();//args.slice(1)
+				printPath();
 			}
-			
-			isMVAvailable = true;
 		}
-		else if (command === ">ls" && isLSAvailable)
+		else if (command == "cd" && isCDAvailable)
 		{
-			isCDAvailable = true;
-			printFoldersAtLocation();
+			if( argsCount != 1)
+			{
+				addToHistorial("Usage: cd <NEW PATH>\n\n");
+			}
+			else
+			{
+				var commandBaseDir = undefined
+				var tmpPath = undefined
+
+				if( args.charAt(1) == "/" )
+				{
+					//absolute path
+					commandBaseDir = dataTree;
+					tmpPath = args.slice(1) + "/";
+				}
+				else
+				{
+					//relative path
+					commandBaseDir = currentDir;
+					tmpPath = path + args.slice(1) + "/";
+				}
+
+				var tmpDir = findNodeInDataTree(tmpPath, dataTree)
+				
+				if (tmpDir == undefined)
+				{
+					addToHistorial("Unknown folder\n\n");
+				}
+				else
+				{
+					currentDir = tmpDir;
+					path = currentDir.getAbsPath();
+				}
+				
+				isMVAvailable = true;
+			}
 		}
-		else if (command === ">mv" && isMVAvailable) 
+		else if (command == "ls" && isLSAvailable)
 		{
-			isPointsAvailable = true;
-			alert("mv " + args);
+			if( argsCount != 0)
+			{
+				addToHistorial("Usage: ls\n\n");
+			}
+			else
+			{
+				isCDAvailable = true;
+				printFoldersAtLocation();
+			}
 		}
-		else if (command == ">points" && isPointsAvailable)
+		else if (command == "mv" && isMVAvailable) 
 		{
-			var currentPoints = GetPoints();
-			addToHistorial("Current Points " + currentPoints + "\n");
+			if( argsCount != 2)
+			{
+				addToHistorial("Usage: mv <SOURCE> <DIRECTORY>\n\n");
+			}
+			else
+			{
+				isPointsAvailable = true;
+				alert("mv " + args);
+			}
+		}
+		else if (command == "points" && isPointsAvailable)
+		{
+			if( argsCount != 0)
+			{
+				addToHistorial("Usage: points\n\n");
+			}
+			else
+			{
+				var currentPoints = GetPoints();
+				addToHistorial("Current Points " + currentPoints + "\n\n");
+			}
 		}
 		else
 		{
@@ -222,15 +274,15 @@
 	  {
 		//ignore
 	  }
-	  else if (keynum === 8)
+	  else if (keynum == 8)
 	  {
 			linea = linea.slice(0,-1);
 	  }
-	  else if(keynum === 13)
+	  else if(keynum == 13)
 	  {
-			addToHistorial( path+linea + "\n");
+			addToHistorial( path+prompt+linea + "\n");
 			parseCommand(linea);
-			linea = ">";
+			linea = "";
 	  }
 	  else
 	  {
@@ -244,7 +296,7 @@
 		}
 		  
 	  }
-	  text.text = formatHistorial(historial + path + linea);
+	  text.text = formatHistorial(historial + path +prompt+ linea);
 	  stage.clear();
 	  stage.addChild(text);
 	  stage.update();
