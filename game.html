@@ -27,6 +27,28 @@
 				return this.value;
 			}
 		}
+		
+		addChild(newNode)
+		{
+			if(newNode.parent != undefined)
+			{
+				newNode.parent.removeChild(newNode)
+			}
+			this.descendants.push(newNode)
+			newNode.parent = this
+		}
+		
+		removeChild(oldNode)
+		{
+			if(this.descendants.includes(oldNode))
+			{
+				var indexOfChild = this.descendants.indexOf(oldNode)
+				if( indexOfChild != -1)
+				{
+					this.descendants.splice(indexOfChild,1)
+				}
+			}
+		}
 	}
 	var canvas = null;
 	var dataTree = new TreeNode("/");
@@ -35,7 +57,7 @@
 	dataTree.descendants.push(lostAndFoundFolder );
 	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
-	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nEILAF console 1.0.0\nType 'help' for more information.\n\n";
+	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nEILAF O.S. 1.0.0\nType 'help' for more information.\n\n";
 	var prompt = ">";
 	var linea = "";
 	var path ="/";
@@ -84,15 +106,37 @@
 		var currentFolder = structure;
 		for (var i = 1; i < folderList.length && currentFolder != undefined ; i++)
 		{
-			currentFolder = currentFolder.descendants.find(elem => elem.value == folderList[i])
+			if(folderList[i] == ".")
+			{
+				continue;
+			}
+			else if (folderList[i] == "..")
+			{
+				currentFolder = currentFolder.parent;
+			}
+			else
+			{
+				currentFolder = currentFolder.descendants.find(elem => elem.value == folderList[i])
+			}
 		}
 		
 		return currentFolder
 	}
 	
-	function printFoldersAtLocation()
+	function printFoldersAtLocation(absPath)
 	{
-		var currentLocation = findNodeInDataTree(path, dataTree);
+		
+		var currentLocation = null
+		
+		if(absPath != undefined)
+		{
+			currentLocation = findNodeInDataTree(absPath, dataTree);
+		}
+		else
+		{
+			currentLocation = findNodeInDataTree(path, dataTree);
+		}
+		
 		if (currentLocation != undefined)
 		{
 			currentLocation.descendants.forEach(element =>addToHistorial(element.value + "\t"));
@@ -102,17 +146,32 @@
 	function printPath()
 	{
 		addToHistorial(currentDir.getAbsPath()+"\n\n")
-		//strPath = "/";
-		//currentDir = 
-		//dataTree
+	}
+	function getArgsAbsPath(inPath)
+	{
+		var tmpPath = inPath.slice(0)
+
+		if(tmpPath.charAt(tmpPath.length-1) != "/")
+		{
+			tmpPath += "/";
+		}
+
+		if( tmpPath.charAt(0) != "/" )
+		{
+			//relative path
+			tmpPath = path + tmpPath;
+		}
+		
+		return tmpPath;
 	}
 	
 	function countArguments(matchList)
 	{
-		return Math.max(0, matchList.filter(arg => arg != "").length-2);
+		//return Math.max(0, matchList.filter(arg => arg != "").length-2);
+		return Math.max(0, matchList.filter(arg => ((arg != "") && (arg != undefined))).length-2);
 	}
 	function parseCommand(commandLine) {
-		var re = /\s*(\b\w*\b)\s*(\b.*\b)\s*(\b.*\b)\s*(\b.*\b)/g;
+		var re = /\s*(\b\w*\b)\s*(-?\.?\.?\/?(?:\b[^ ]*\b)?\/?)?\s*(-?\.?\.?\/?(?:\b[^ ]*\b)?\/?)?\s*(.*)/g;
 		var argsList = [...commandLine.matchAll(re)][0]
 		if( argsList == undefined)
 		{
@@ -121,8 +180,8 @@
 		}
 
 		var argsCount = countArguments(argsList)
-		var command = argsList[1]//(commandLine.includes(" ")) ? commandLine.substr(0, commandLine.indexOf(" ")) : commandLine;
-		var args = commandLine.substr(commandLine.indexOf(" "));
+		var command = argsList[1]
+		var args = argsList.slice(2,2+argsCount)
 		if (command == "help")
 		{
 			if( argsCount != 0)
@@ -185,23 +244,9 @@
 			}
 			else
 			{
-				var commandBaseDir = undefined
-				var tmpPath = undefined
+				argPath = getArgsAbsPath(args[0])
 
-				if( args.charAt(1) == "/" )
-				{
-					//absolute path
-					commandBaseDir = dataTree;
-					tmpPath = args.slice(1) + "/";
-				}
-				else
-				{
-					//relative path
-					commandBaseDir = currentDir;
-					tmpPath = path + args.slice(1) + "/";
-				}
-
-				var tmpDir = findNodeInDataTree(tmpPath, dataTree)
+				var tmpDir = findNodeInDataTree(argPath, dataTree)
 				
 				if (tmpDir == undefined)
 				{
@@ -223,19 +268,26 @@
 		}
 		else if (command == "ls" && isLSAvailable)
 		{
-			if( argsCount != 0)
+			//TODO: support -R and parameter
+			if( argsCount <= 1)
 			{
-				addToHistorial("Usage: ls\n\n");
-			}
-			else
-			{
-				printFoldersAtLocation();
+				var argPath = undefined
+				if( argsCount == 1 )
+				{
+					argPath = getArgsAbsPath(args[0])
+				}
+				printFoldersAtLocation(argPath);
+
 
 				if( !isCDAvailable)
 				{
 					addToHistorial("[[ UNLOCKED: <cd> command ]]\n\n");
 				}
 				isCDAvailable = true;
+			}
+			else
+			{
+				addToHistorial("Usage: ls\n\n");
 			}
 		}
 		else if (command == "mv" && isMVAvailable) 
@@ -246,7 +298,24 @@
 			}
 			else
 			{
-				alert("mv " + args);
+				var srcPath = getArgsAbsPath(args[0])
+				var dstPath = getArgsAbsPath(args[1])
+
+				var srcNode = findNodeInDataTree(srcPath, dataTree) || findNodeInDataTree(srcPath, currentDir)
+				if(srcNode == undefined)
+				{
+					addToHistorial("Unknown directory: ["+args[0]+"]\n\n");
+					return;
+				}
+				var dstNode = findNodeInDataTree(dstPath, dataTree) || findNodeInDataTree(dstPath, currentDir)
+				if(dstNode == undefined)
+				{
+					addToHistorial("Unknown directory: ["+args[1]+"]\n\n");
+					return;
+				}
+
+				dstNode.addChild(srcNode)
+
 
 				if( !isPointsAvailable)
 				{
