@@ -6,19 +6,48 @@
     <script> 
 	
 	var relations = {'ball': ['sphere', 'toy', 'throw', 'game equipment'], 'marble': ['rock', 'ball', 'stone'], 'goal': ['end', 'score', 'game equipment'], 'net': ['internet', 'game equipment', 'trap', 'goal'], 'target': ['end', 'sport equipment', 'victim', 'reference', 'place', 'spot', 'goal'], 'purpose': ['end', 'resolution', 'resolve', 'goal'], 'intention': ['end', 'goal'], 'aim': ['end', 'direction', 'way', 'goal'], 'intent': ['end', 'signification', 'significance', 'meaning', 'goal'], 'destination': ['end', 'terminal', 'direction', 'goal'], 'basket': ['container', 'score', 'goal'], 'objective': ['end', 'goal'], 'cage': ['net', 'constraint', 'restraint', 'enclosure'], 'fishnet': ['net'], 'shoe': ['footwear'], 'calceus': ['shoe'], 'sneaker': ['shoe'], 'walker': ['shoe', 'traveler'], 'sandal': ['shoe'], 'footwear': ['wearable', 'clothing', 'wear'], 'boot': ['footwear', 'case', 'shell', 'compartment'], 'overshoe': ['footwear'], 'game equipment': ['equipment'], 'counter': ['game equipment'], 'point': ['end', 'target', 'aim', 'objective', 'score'], 'clothing': ['covering'], 'neckpice': ['clothing'], 'uniform': ['clothing'], 'dress': ['clothing'], 'outwear': ['wearable', 'clothing', 'wear'], 'handwear': ['wearable', 'clothing', 'wear'], 'attire': ['wearable', 'clothing', 'wear'], 'clothes': ['clothing'], 'geaddress': ['clothing'], 'accessory': ['wearable', 'clothing', 'wear'], 'score': ['music', 'number', 'rating', 'evaluation'], 'match': ['duplicate', 'competition', 'counterpart', 'contest', 'score', 'lighter'], 'grade': ['slope', 'rank', 'rating', 'evaluation', 'score'], 'wearable': ['covering'], 'headdress': ['wearable', 'wear'], 'neckpiece': ['wearable', 'wear'], 'will': ['intention', 'intent', 'purpose', 'aim'], 'mind': ['intention', 'intent', 'purpose', 'aim'], 'idea': ['intention', 'intent', 'purpose', 'aim'], 'sake': ['intention', 'intent', 'purpose', 'aim'], 'wear': ['covering'], 'internet': [''], 'business': ['aim', 'objective'], 'track': ['aim'], 'marcher': ['walker'], 'strider': ['walker'], 'hiker': ['walker'], 'passerby': ['walker'], 'parader': ['walker'], 'perseverance': ['purpose'], 'persistence': ['purpose'], 'tenacity': ['purpose'], 'diligence': ['purpose'], 'trap': ['device', 'hazard', 'plan'], 'pitfall': ['trap'], 'pit': ['trap'], 'entaglement': ['trap'], 'web': ['trap'], 'resolution': ['trait', 'papers'], 'decision': ['resolution'], 'determination': ['resolution'], 'stiffness': ['resolution'], 'willpower': ['resolution'], 'end': ['content', 'boundary', 'state', 'bound', 'place', 'sopt'], 'itention': ['end'], 'endpoint': ['end'], 'pole': ['end'], 'entdgame': ['end'], 'termination': ['end'], 'rise': ['grade'], 'upgrade': ['grade'], 'belt': ['accessory'], 'evaluation': ['judgment', 'assessment'], 'marking': ['evaluation'], 'rock': ['crystal']}
+	
+	var commandData = {
+		"help":{
+			"available": true,
+			"helpStr": "Displays this message",
+			"handler": handleHelp
+			},
+		"ls": {
+			"available": false,
+			"helpStr": "List information about the FILEs in the current directory",
+			"handler": handleLs
+			},
+		"cd": {
+			"available": false,
+			"helpStr": "Change the current directory",
+			"handler": handleCd
+			},
+		"mv": {
+			"available": false,
+			"helpStr": "move folder SRC to DST",
+			"handler": handleMv
+			},
+		"points": {
+			"available": true,
+			"helpStr": "Computes a score based on how well the folders are organized outside of '/lost+found'",
+			"handler": handlePoints
+			}
+		}
 
 	class TreeNode
 	{
-		constructor(value, parent)
+		constructor(value, parent, canMove = true)
 		{
 			this.value = value;
 			this.descendants = [];
 			this.parent = parent
+			this.canMove = canMove
 		}
 		
 		getAbsPath()
 		{
-			if( this.parent != undefined)
+			if( (this.parent != undefined) && (this.parent != null))
 			{
 				return this.parent.getAbsPath()+this.value+"/";
 			}
@@ -51,9 +80,9 @@
 		}
 	}
 	var canvas = null;
-	var dataTree = new TreeNode("/");
+	var dataTree = new TreeNode("/", null, false);
 	var currentDir = dataTree
-	var lostAndFoundFolder = new TreeNode("lostandfound", dataTree)
+	var lostAndFoundFolder = new TreeNode("lost+found", dataTree, false)
 	dataTree.descendants.push(lostAndFoundFolder );
 	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
@@ -61,16 +90,185 @@
 	var prompt = ">";
 	var linea = "";
 	var path ="/";
-	var isLSAvailable = false;
-//	var isPWDAvailable = false;
-	var isCDAvailable = false;
-	var isMVAvailable = false;
-	var isPointsAvailable = false
 	var text = new createjs.Text(historial + path + prompt + linea, "20px Courier New", "#00ff00");
 	text.lineHeight = 20;
+	var screenWidthInChars = 66
 	var stage;// = new createjs.Stage("demoCanvas");
 	var sfxIds =["keyboard-01","keyboard-02","keyboard-03","keyboard-04","keyboard-05","keyboard-06","keyboard-07","keyboard-08","keyboard-09","keyboard-10"]
 
+	function enableCommand(commandStr)
+	{
+		//TODO: reproduce a cool sound! B-)
+		if( !commandData[commandStr].available)
+		{
+			var unlockedStr = "| UNLOCKED COMMAND: <"+commandStr+"> |"
+			var strLen = unlockedStr.length
+			var rightAlignSpaces = " ".repeat(screenWidthInChars-strLen)
+			var upAndDownStr = rightAlignSpaces+"+"+"-".repeat(strLen-2)+"+\n"
+			addToHistorial( upAndDownStr );
+			addToHistorial( rightAlignSpaces+unlockedStr + "\n");
+			addToHistorial( upAndDownStr + "\n");
+		}
+		commandData[commandStr].available = true;
+	}
+
+	function handleHelp(argList, argLen)
+	{
+		if( argLen != 0)
+		{
+			addToHistorial("Usage: help\n\n");
+			return;
+		}
+
+		var minSpace = 3
+		var maxVerticalAlign = 10
+		var keyLength = 0
+		var spaces = " ".repeat(screenWidthInChars);
+		for( key in commandData)
+		{
+			if( commandData[key].available)
+			{
+				keyLength = Math.max(keyLength, key.length)
+			}
+		}
+		
+		var vertAlign = Math.max(keyLength+minSpace, maxVerticalAlign)
+		var maxLineLength = screenWidthInChars-vertAlign
+
+		//var re = new RegExp(".{1,"+(screenWidthInChars-vertAlign)+"}(\s|$)","g");
+		for( key in commandData)
+		{
+			if( commandData[key].available)
+			{
+				var splitedLine = []
+				var lineStart = 0
+				var lineEnd = 0
+				var helpStr = commandData[key].helpStr
+				while (lineStart < helpStr.length)
+				{
+					lineEnd = helpStr.lastIndexOf(" ", lineStart+	maxLineLength)
+					if( (lineEnd == -1) || (lineEnd <= lineStart) || (lineStart+maxLineLength > helpStr.length))
+					{
+						lineEnd = Math.min(lineStart+maxLineLength, helpStr.length)
+					}
+					splitedLine.push(helpStr.slice(lineStart, lineEnd))
+					lineStart = lineEnd
+				}
+				//commandData[key].helpStr.match(re);
+				for( var index = 0; index < splitedLine.length; index++)
+				{
+					if( index == 0)
+					{
+						addToHistorial(key+spaces.slice(0,vertAlign-key.length)+splitedLine[index]+"\n");
+					}
+					else
+					{
+						addToHistorial(spaces.slice(0,vertAlign)+splitedLine[index]+"\n");
+					}
+				}
+			}
+		}
+		addToHistorial("\n")
+
+		enableCommand("ls");
+	}
+	
+	function handleLs(argList, argLen)
+	{
+		//TODO: support -R and parameter
+		//TODO: unlock the parameter
+		if( argLen <= 1)
+		{
+			var argPath = undefined
+			if( argLen == 1 )
+			{
+				argPath = getArgsAbsPath(argList[0])
+			}
+			printFoldersAtLocation(argPath);
+
+			enableCommand("cd")
+		}
+		else
+		{
+			addToHistorial("Usage: ls\n\n");
+		}
+	}
+	
+	function handleCd(argList, argLen)
+	{
+		if( argLen != 1)
+		{
+			addToHistorial("Usage: cd <NEW PATH>\n\n");
+		}
+		else
+		{
+			argPath = getArgsAbsPath(argList[0])
+
+			var tmpDir = findNodeInDataTree(argPath, dataTree)
+			
+			if (tmpDir == undefined)
+			{
+				addToHistorial("Unknown folder\n\n");
+			}
+			else
+			{
+				currentDir = tmpDir;
+				path = currentDir.getAbsPath();
+			}
+			
+			enableCommand("mv")
+		}
+	}
+	
+	function handleMv(argList, argLen)
+	{
+		if( argLen != 2)
+		{
+			addToHistorial("Usage: mv <SRC> <DST>\n\n");
+		}
+		else
+		{
+			var srcPath = getArgsAbsPath(argList[0])
+			var dstPath = getArgsAbsPath(argList[1])
+			
+			var srcNode = findNodeInDataTree(srcPath, dataTree) || findNodeInDataTree(srcPath, currentDir)
+			if(srcNode == undefined)
+			{
+				addToHistorial("ERROR: ["+argList[0]+"] no such file or directory\n\n");
+				return;
+			}
+			if(!srcNode.canMove)
+			{
+				addToHistorial("ERROR: cannot move ["+srcNode.getAbsPath()+"]: Permission denied\n\n");
+				return;
+			}
+			
+			var dstNode = findNodeInDataTree(dstPath, dataTree) || findNodeInDataTree(dstPath, currentDir)
+			if(dstNode == undefined)
+			{
+				addToHistorial("ERROR: ["+argList[1]+"] no such file or directory\n\n");
+				return;
+			}
+
+			dstNode.addChild(srcNode)
+
+
+			enableCommand("points")
+		}
+	}
+	
+	function handlePoints(argList, argLen)
+	{
+		if( argLen != 0)
+		{
+			addToHistorial("Usage: points\n\n");
+		}
+		else
+		{
+			var currentPoints = GetPoints();
+			addToHistorial("Current Points " + currentPoints + "\n\n");
+		}
+	}
 
     function init() {
 		canvas = document.getElementById('demoCanvas')
@@ -168,212 +366,28 @@
 	function countArguments(matchList)
 	{
 		//return Math.max(0, matchList.filter(arg => arg != "").length-2);
-		return Math.max(0, matchList.filter(arg => ((arg != "") && (arg != undefined))).length-2);
-	}
-	function printHelp(helpDict)
-	{
-		var minSpace = 3
-		var maxVerticalAlign = 10
-		var keyLength = 0
-		var spaces = "                         ";
-		for( key in helpDict)
-		{
-			keyLength = Math.max(keyLength, key.length)
-		}
-		
-		var vertAlign = Math.max(keyLength+minSpace, maxVerticalAlign)
-
-		var re = new RegExp(".{1,"+(66-vertAlign)+"}(\s|$)","g");
-		for( key in helpDict)
-		{
-			var splitedLine = helpDict[key].match(re);
-			for( var index = 0; index < splitedLine.length; index++)
-			{
-				if( index == 0)
-				{
-					addToHistorial(key+spaces.slice(0,vertAlign-key.length)+splitedLine[index]+"\n");
-				}
-				else
-				{
-					addToHistorial(spaces.slice(0,vertAlign)+splitedLine[index]+"\n");
-				}
-			}
-		}
-		addToHistorial("\n")
+		return Math.max(0, matchList.filter(arg => ((arg != "") && (arg != undefined))).length);
 	}
 	function parseCommand(commandLine) {
-		var re = /\s*(\b\w*\b)\s*(-?\.?\.?\/?(?:\b[^ ]*\b)?\/?)?\s*(-?\.?\.?\/?(?:\b[^ ]*\b)?\/?)?\s*(.*)/g;
-		var argsList = [...commandLine.matchAll(re)][0]
-		if( argsList == undefined)
+		var re = /\s*(\b\w+\b)\s*((?:\"[^"]*\")|(?:\'[^']*\')|(?:[^ ]*))\s*((?:\"[^"]*\")|(?:\'[^']*\')|(?:[^ ]*))\s*(.*)$/g;
+		var args = [...commandLine.matchAll(re)][0]
+		var argList = args.splice(2)
+		if( args == undefined)
 		{
 			addToHistorial("Unknown command\n\n");
 			return;
 		}
 
-		var argsCount = countArguments(argsList)
-		var command = argsList[1]
-		var args = argsList.slice(2,2+argsCount)
-		if (command == "help")
+		var argsCount = countArguments(argList)
+		var command = args[1]
+		
+		if( !(command in commandData) || !commandData[command].available)
 		{
-			if( argsCount != 0)
-			{
-				addToHistorial("Usage: help\n\n");
-			}
-			else
-			{
-				helpDict = {}
-
-				// shows available commands
-				helpDict["help"] = "Displays this message"
-
-				if (isLSAvailable)
-				{
-					helpDict["ls"] = "List information about the FILEs in the current directory.";
-
-				}
-//				if (isPWDAvailable)
-//				{
-//					helpDict["pwd"] = "Print the name of the current working directory.";
-//					//addToHistorial("pwd\t\t\t\tPrint the name of the current working directory.\n");
-//				}
-				if (isCDAvailable)
-				{
-					helpDict["cd"] = "Change the current directory.";
-				}
-				if (isMVAvailable)
-				{
-					helpDict["mv"] = "move folder SRC to DST";
-				}
-				if (isPointsAvailable)
-				{
-					helpDict["ls"] = "List information about the FILEs in the current directory";
-				}
-				
-				printHelp(helpDict)
-				
-				if( !isLSAvailable)
-				{
-					addToHistorial("[[ UNLOCKED: <ls> command ]]\n");
-				}
-				isLSAvailable = true;
-//				isPWDAvailable = true;
-			}
+			addToHistorial(command+": Unknown command\n\n");
+			return;
 		}
-//		else if (command == "pwd" && isPWDAvailable)
-//		{
-//			if( argsCount != 0)
-//			{
-//				addToHistorial("Usage: pwd\n\n");
-//			}
-//			else
-//			{
-//				printPath();
-//			}
-//		}
-		else if (command == "cd" && isCDAvailable)
-		{
-			if( argsCount != 1)
-			{
-				addToHistorial("Usage: cd <NEW PATH>\n\n");
-			}
-			else
-			{
-				argPath = getArgsAbsPath(args[0])
-
-				var tmpDir = findNodeInDataTree(argPath, dataTree)
-				
-				if (tmpDir == undefined)
-				{
-					addToHistorial("Unknown folder\n\n");
-				}
-				else
-				{
-					currentDir = tmpDir;
-					path = currentDir.getAbsPath();
-				}
-				
-				if( !isMVAvailable)
-				{
-					addToHistorial("[[ UNLOCKED: <mv> command ]]\n\n");
-				}
-
-				isMVAvailable = true;
-			}
-		}
-		else if (command == "ls" && isLSAvailable)
-		{
-			//TODO: support -R and parameter
-			if( argsCount <= 1)
-			{
-				var argPath = undefined
-				if( argsCount == 1 )
-				{
-					argPath = getArgsAbsPath(args[0])
-				}
-				printFoldersAtLocation(argPath);
-
-
-				if( !isCDAvailable)
-				{
-					addToHistorial("[[ UNLOCKED: <cd> command ]]\n\n");
-				}
-				isCDAvailable = true;
-			}
-			else
-			{
-				addToHistorial("Usage: ls\n\n");
-			}
-		}
-		else if (command == "mv" && isMVAvailable) 
-		{
-			if( argsCount != 2)
-			{
-				addToHistorial("Usage: mv <SRC> <DST>\n\n");
-			}
-			else
-			{
-				var srcPath = getArgsAbsPath(args[0])
-				var dstPath = getArgsAbsPath(args[1])
-
-				var srcNode = findNodeInDataTree(srcPath, dataTree) || findNodeInDataTree(srcPath, currentDir)
-				if(srcNode == undefined)
-				{
-					addToHistorial("Unknown directory: ["+args[0]+"]\n\n");
-					return;
-				}
-				var dstNode = findNodeInDataTree(dstPath, dataTree) || findNodeInDataTree(dstPath, currentDir)
-				if(dstNode == undefined)
-				{
-					addToHistorial("Unknown directory: ["+args[1]+"]\n\n");
-					return;
-				}
-
-				dstNode.addChild(srcNode)
-
-
-				if( !isPointsAvailable)
-				{
-					addToHistorial("[[ UNLOCKED: <points> command ]]\n\n");
-				}
-				isPointsAvailable = true;
-			}
-		}
-		else if (command == "points" && isPointsAvailable)
-		{
-			if( argsCount != 0)
-			{
-				addToHistorial("Usage: points\n\n");
-			}
-			else
-			{
-				var currentPoints = GetPoints();
-				addToHistorial("Current Points " + currentPoints + "\n\n");
-			}
-		}
-		else
-		{
-			addToHistorial("Unknown command\n\n");
-		}
+		
+		commandData[command].handler(argList, argsCount)
 	}
 	
 	function initLostAndFoundFolder(treeNode)
@@ -426,7 +440,12 @@
 	  } else if(e.which){ // Netscape/Firefox/Opera                 
 		keynum = e.which;
 	  }
-	if (keynum == 8)
+	  if (keynum == 9)
+	  {
+		//tab
+		e.preventDefault();
+	  }
+	else if (keynum == 8)
 	  {
 		linea = linea.slice(0,-1);
 			createjs.Sound.play(sfxIds[sfxIds.length-1]);
