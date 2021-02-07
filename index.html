@@ -29,7 +29,7 @@
 			"handler": handleMv
 			},
 		"points": {
-			"available": true,
+			"available": false,
 			"helpStr": "Computes a score based on how well the folders are organized outside of '/lost+found'",
 			"handler": handlePoints
 			}
@@ -37,11 +37,14 @@
 
 	class TreeNode
 	{
-		constructor(value, parent, canMove = true)
+		constructor(name, parent, canMove = true)
 		{
-			this.value = value;
+			this.name = name;
 			this.descendants = [];
-			this.parent = parent
+			if( parent )
+			{
+				parent.addChild(this)
+			}
 			this.canMove = canMove
 		}
 		
@@ -49,11 +52,11 @@
 		{
 			if( (this.parent != undefined) && (this.parent != null))
 			{
-				return this.parent.getAbsPath()+this.value+"/";
+				return this.parent.getAbsPath()+this.name+"/";
 			}
 			else
 			{
-				return this.value;
+				return this.name;
 			}
 		}
 		
@@ -83,7 +86,8 @@
 	var dataTree = new TreeNode("/", null, false);
 	var currentDir = dataTree
 	var lostAndFoundFolder = new TreeNode("lost+found", dataTree, false)
-	dataTree.descendants.push(lostAndFoundFolder );
+	var minChildFolders = 2
+	var maxChildFolders = 5
 	initLostAndFoundFolder(lostAndFoundFolder);
 	var historial = "Welcome to Mauri's game\nGGJ21\n\n";
 	var historial = " _____                            _    _      _\n|  ___|                          | |  | |    (_)\n| |__  __   __  ___  _ __  _   _ | |_ | |__   _  _ __    __ _\n|  __| \\ \\ / / / _ \\| '__|| | | || __|| '_ \\ | || '_ \\  / _` |\n| |___  \\ V / |  __/| |   | |_| || |_ | | | || || | | || (_| |\n\\____/   \\_/   \\___||_|    \\__, | \\__||_| |_||_||_| |_| \\__, |\n                            __/ |                        __/ |\n                           |___/                        |___/\n          _                      _              _\n         (_)                    | |            | |\n          _  ___                | |  ___   ___ | |_\n         | |/ __|               | | / _ \\ / __|| __|\n         | |\\__ \\               | || (_) |\\__ \\| |_\n         |_||___/               |_| \\___/ |___/ \\__|\n\n\n                                /              _            \\\n                               (  _ __  _|   _|_ _    __  _| )\n                                \\(_|| |(_|    | (_)|_|| |(_|/\n\nGGJConsole O.S. 2.0.21\nType 'help' for more information.\n\n";
@@ -95,6 +99,7 @@
 	var screenWidthInChars = 66
 	var stage;// = new createjs.Stage("demoCanvas");
 	var sfxIds =["keyboard-01","keyboard-02","keyboard-03","keyboard-04","keyboard-05","keyboard-06","keyboard-07","keyboard-08","keyboard-09","keyboard-10"]
+	var tabCount = 0
 
 	function enableCommand(commandStr)
 	{
@@ -183,6 +188,10 @@
 			if( argLen == 1 )
 			{
 				argPath = getArgsAbsPath(argList[0])
+			}
+			else
+			{
+				argPath = path
 			}
 			printFoldersAtLocation(argPath);
 
@@ -292,17 +301,19 @@
 		if( pathToCheck.charAt(0) == "/")
 		{
 			//absolute path
-			folderList[0] = dataTree.value;
+			folderList[0] = dataTree.name;
 		}
 		
-		if( folderList[0] !== structure.value)
+		if( folderList[0] !== structure.name)
 		{
 			//the path is not relative to the folder
 			return undefined;
 		}
 		
+		folderList.shift()
+		
 		var currentFolder = structure;
-		for (var i = 1; i < folderList.length && currentFolder != undefined ; i++)
+		for (var i = 0; i < folderList.length && currentFolder != undefined ; i++)
 		{
 			if(folderList[i] == ".")
 			{
@@ -314,30 +325,23 @@
 			}
 			else
 			{
-				currentFolder = currentFolder.descendants.find(elem => elem.value == folderList[i])
+				currentFolder = currentFolder.descendants.find(elem => elem.name == folderList[i])
 			}
 		}
 		
 		return currentFolder
 	}
 	
-	function printFoldersAtLocation(absPath)
+	function printFoldersAtLocation(absPath, filter = "")
 	{
-		
-		var currentLocation = null
-		
-		if(absPath != undefined)
-		{
-			currentLocation = findNodeInDataTree(absPath, dataTree);
-		}
-		else
-		{
-			currentLocation = findNodeInDataTree(path, dataTree);
-		}
-		
+		// recives an absolute path
+		var currentLocation = findNodeInDataTree(absPath, dataTree)
+
 		if (currentLocation != undefined)
 		{
-			currentLocation.descendants.forEach(element =>addToHistorial(element.value + "\t"));
+			var dirListing = currentLocation.descendants.map(element =>element.name).filter(e => e.startsWith(filter));
+			dirListing.sort()
+			addToHistorial( dirListing.join("\n") )
 		}
 		addToHistorial("\n\n");
 	}
@@ -368,16 +372,20 @@
 		//return Math.max(0, matchList.filter(arg => arg != "").length-2);
 		return Math.max(0, matchList.filter(arg => ((arg != "") && (arg != undefined))).length);
 	}
-	function parseCommand(commandLine) {
+	function parseCommand(commandLine)
+	{
 		var re = /\s*(\b\w+\b)\s*((?:\"[^"]*\")|(?:\'[^']*\')|(?:[^ ]*))\s*((?:\"[^"]*\")|(?:\'[^']*\')|(?:[^ ]*))\s*(.*)$/g;
-		var args = [...commandLine.matchAll(re)][0]
-		var argList = args.splice(2)
+		return [...commandLine.matchAll(re)][0]
+	}
+	function executeCommand(commandLine) {
+		var args = parseCommand(commandLine)
 		if( args == undefined)
 		{
-			addToHistorial("Unknown command\n\n");
+			addToHistorial("\n");
 			return;
 		}
 
+		var argList = args.splice(2)
 		var argsCount = countArguments(argList)
 		var command = args[1]
 		
@@ -390,12 +398,145 @@
 		commandData[command].handler(argList, argsCount)
 	}
 	
+	function handleTab(commandLine)
+	{
+		return;
+/*		tabCount = tabCount+1
+
+		var args = parseCommand(commandLine)
+		if( args == undefined)
+		{
+			if( tabCount >= 2)
+			{
+				addToHistorial( path+prompt+linea + "\n");
+				addToHistorial( Object.keys(commandData).filter( elem => commandData[elem].available).join("\n")+"\n\n")
+
+				tabCount = 0
+			}
+		}
+		else
+		{
+			var reEndsWithSpace = /\s$/
+			var argList = args.splice(2)
+			var argsCount = countArguments(argList)
+			var command = args[1]
+			
+			if( !reEndsWithSpace.test(args[0]) )
+			{
+				if(argsCount == 0)
+				{
+					//tab on commands
+					if( tabCount == 1)
+					{
+						// if (command filter == 1) complete the current command and {tabCount = 0}, else NOPE
+						var commandList = Object.keys(commandData).filter(str => commandData[str].available && str.startsWith(command))
+						if( commandList.length == 1)
+						{
+							linea = linea + commandList[0].slice(command.length) + " "
+							tabCount = 0
+						}
+					}
+					else
+					{
+						// list all commands filtered
+						var commandList = Object.keys(commandData).filter(str => commandData[str].available && str.startsWith(command))
+						
+						if( commandList.length != 0 )
+						{
+							addToHistorial(path +prompt+ linea+"\n")
+							addToHistorial(commandList.join("\n")+"\n\n")
+						}
+						tabCount = 0
+					}
+				}
+				else
+				{
+					if(argsCount <= 2)
+					{
+						var lastArg = argList[argsCount-1]
+						// use the last arg and ...
+						if( tabCount == 1 )
+						{
+							//complete the path (, if so ... also tabCount = 0
+							var currentLocation = findNodeInDataTree(absPath, dataTree)
+
+							if (currentLocation != undefined)
+							{
+								var dirListing = currentLocation.descendants.map(element =>element.name).filter(e => e.startsWith(filter));
+						}
+						else
+						{
+							var lastIndexOfSlash = lastArg.lastIndexOf("/")
+							
+							if( lastIndexOfSlash == lastArg.length)
+							{
+								//list the filtered 
+								printFoldersAtLocation(lastArg)
+							}
+							tabCount = 0
+						}
+					}
+					else
+					{
+						tabCount = 0
+					}
+				}
+			}
+			else
+			{
+				// LS on current directory
+				if( tabCount == 2)
+				{
+					if( commandData.ls.available )
+					{
+						addToHistorial(path +prompt+ linea+"\n")
+						printFoldersAtLocation(currentDir.getAbsPath())
+					}
+					tabCount = 0
+				}
+			}
+		} */
+	}
+	
+	function arrayShuffle(array)
+	{
+		var currentIndex = array.length, temporaryValue, randomIndex;
+
+		// While there remain elements to shuffle...
+		while (0 !== currentIndex) {
+
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+
+			// And swap it with the current element.
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+
+		return array;
+	}
+	function rndBetween(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min);
+	}
 	function initLostAndFoundFolder(treeNode)
 	{
+		var wordList = arrayShuffle(Object.keys(relations))
 		
-		treeNode.descendants.push(new TreeNode("a", treeNode));
-		treeNode.descendants.push(new TreeNode("b", treeNode));
-		treeNode.descendants.push(new TreeNode("c", treeNode));
+		var currentDir = treeNode
+		var unvisitedNodes = []
+		
+		while( wordList.length != 0 )
+		{
+			var wordCount = rndBetween(minChildFolders,maxChildFolders)
+			var currentWords = wordList.slice(0,wordCount)
+			wordList = wordList.slice(wordCount)
+			
+			currentWords.forEach(word => unvisitedNodes.push( new TreeNode(word, currentDir) ))
+			
+			currentDir = unvisitedNodes.shift()
+		}
 	}
 	
 	function GetPoints()
@@ -432,6 +573,21 @@
 
 		return strIn;
 	}
+	
+	var keyPressed = {}
+	document.onkeyup = function(e)
+	{
+	  if(window.event) { // IE                  
+		keynum = e.keyCode;
+	  } else if(e.which){ // Netscape/Firefox/Opera                 
+		keynum = e.which;
+	  }
+	  
+	  if( !keynum in keyPressed || keyPressed[keynum] )
+	  {
+		keyPressed[keynum] = false
+	  }
+	}
 
 	document.onkeydown = function(e)
 	{
@@ -440,22 +596,44 @@
 	  } else if(e.which){ // Netscape/Firefox/Opera                 
 		keynum = e.which;
 	  }
+
+	  var triggerSound = false
+	  if( !keynum in keyPressed || !keyPressed[keynum] )
+	  {
+		triggerSound = true
+	  }
+	  keyPressed[keynum] = true
+	  
 	  if (keynum == 9)
 	  {
 		//tab
 		e.preventDefault();
+		handleTab(linea);
+		if(triggerSound)
+		{
+			createjs.Sound.play(sfxIds[sfxIds.length-1]);
+		}
 	  }
 	else if (keynum == 8)
 	  {
 		linea = linea.slice(0,-1);
+		if(triggerSound)
+		{
 			createjs.Sound.play(sfxIds[sfxIds.length-1]);
+		}
+		
+		tabCount = 0
 	  }
 	  else if(keynum == 13)
 	  {
-			addToHistorial( path+prompt+linea + "\n");
-			parseCommand(linea);
-			linea = "";
+		addToHistorial( path+prompt+linea + "\n");
+		executeCommand(linea);
+		linea = "";
+		if(triggerSound)
+		{
 			createjs.Sound.play(sfxIds[sfxIds.length-1]);
+		}
+		tabCount = 0
 	  }
 	  else
 	  {
@@ -464,14 +642,30 @@
 		  linea  = linea + e.key;
 		}
 		  var soundId = sfxIds[Math.floor(Math.random() * sfxIds.length)];
+		  if(triggerSound)
+		  {
+			createjs.Sound.play(soundId);
+		  }
 		  
-		  createjs.Sound.play(soundId);
+		  tabCount = 0
 	  }
 	  formatHistorial(text, historial + path +prompt+ linea);
-	  stage.clear();
-	  stage.addChild(text);
+	  //stage.clear();
+	  //stage.addChild(text);
 	  stage.update();
-	  
+
+	}
+	
+	createjs.Ticker.addEventListener("tick", handleTick);
+	createjs.Ticker.framerate = 2
+	
+	var showCursor = false
+	function handleTick()
+	{
+		var cursor = showCursor ? "|":""
+		formatHistorial(text, historial + path +prompt+ linea + cursor);
+		showCursor = !showCursor
+		stage.update();
 	}
     </script>
   </head>
