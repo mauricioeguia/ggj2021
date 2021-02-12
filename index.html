@@ -11,27 +11,45 @@
 		"help":{
 			"available": true,
 			"helpStr": "Displays this message",
-			"handler": handleHelp
+			"handler": handleHelp,
+			"enabledTab": false,
+			"parameters": []
 			},
 		"ls": {
 			"available": false,
 			"helpStr": "List information about the FILEs in the current directory",
-			"handler": handleLs
+			"handler": handleLs,
+			"enabledTab": false,
+			"parameters": {"-R":{
+								"available": false,
+								"helpStr": "List subdirectories recursively"
+								} 
+							}
 			},
 		"cd": {
 			"available": false,
 			"helpStr": "Change the current directory",
-			"handler": handleCd
+			"handler": handleCd,
+			"enabledTab": false,
+			"parameters": []
 			},
 		"mv": {
 			"available": false,
 			"helpStr": "move folder SRC to DST",
-			"handler": handleMv
+			"handler": handleMv,
+			"enabledTab": false,
+			"parameters": []
 			},
 		"points": {
 			"available": false,
 			"helpStr": "Computes a score based on how well the folders are organized outside of '/lost+found'",
-			"handler": handlePoints
+			"handler": handlePoints,
+			"enabledTab": false,
+			"parameters": {"-R":{
+								"available": false,
+								"helpStr": "Show the computed score for every folder in the current directory"
+								} 
+							}
 			}
 		}
 
@@ -58,6 +76,11 @@
 			{
 				return this.name;
 			}
+		}
+		
+		getFilterChildNames(filter)
+		{
+			return this.descendants.map(element =>element.name).filter(e => e.startsWith(filter));
 		}
 		
 		addChild(newNode)
@@ -100,21 +123,67 @@
 	var stage;// = new createjs.Stage("demoCanvas");
 	var sfxIds =["keyboard-01","keyboard-02","keyboard-03","keyboard-04","keyboard-05","keyboard-06","keyboard-07","keyboard-08","keyboard-09","keyboard-10"]
 	var tabCount = 0
-
-	function enableCommand(commandStr)
+	
+	function enableEverything()
 	{
-		//TODO: reproduce a cool sound! B-)
-		if( !commandData[commandStr].available)
+		enableCommand("ls")
+		enableCommand("cd")
+		enableCommand("mv")
+		enableCommand("points")
+		enableCommand("ls","tab")
+		enableCommand("cd","tab")
+		enableCommand("mv","tab")
+		enableCommand("ls","-R")
+		enableCommand("points","-R")
+	}
+	//enableEverything();
+
+	function enableCommand(commandStr, commandArg = "")
+	{
+		if(!commandStr)
 		{
-			var unlockedStr = "| UNLOCKED COMMAND: <"+commandStr+"> |"
-			var strLen = unlockedStr.length
-			var rightAlignSpaces = " ".repeat(screenWidthInChars-strLen)
-			var upAndDownStr = rightAlignSpaces+"+"+"-".repeat(strLen-2)+"+\n"
-			addToHistorial( upAndDownStr );
-			addToHistorial( rightAlignSpaces+unlockedStr + "\n");
-			addToHistorial( upAndDownStr + "\n");
+			return;
 		}
-		commandData[commandStr].available = true;
+
+		//TODO: reproduce a cool sound! B-)
+		var displayStr = "";
+
+		if( commandStr in commandData)
+		{
+			if( !commandData[commandStr].available)
+			{
+				commandData[commandStr].available = true;
+				displayStr = commandStr;
+			}
+			else if (commandArg != "")
+			{
+				var cmdData = commandData[commandStr]
+				
+				if( commandArg == "tab" && !cmdData.enabledTab)
+				{
+					cmdData.enabledTab = true;
+					displayStr = commandStr+ " [TAB] key to autocomplete"
+				}
+				else if( commandArg in cmdData.parameters && !cmdData.parameters[commandArg].available)
+				{
+					cmdData.parameters[commandArg].available = true
+					displayStr = commandStr+ " ["+commandArg+"] argument"
+				}
+			}
+			
+			if( displayStr != "")
+			{
+				var introStr = "| UNLOCKED"+(commandArg != "" ? "" : " COMMAND")+" | "
+				var unlockedStr = introStr+displayStr+" |"
+				var strLen = unlockedStr.length
+				var rightAlignSpaces = " ".repeat(screenWidthInChars-strLen)
+				var upAndDownStr = rightAlignSpaces+"+" +"-".repeat(introStr.length-3)+"+"+"-".repeat(displayStr.length+2)+"+\n"
+				addToHistorial( upAndDownStr );
+				addToHistorial( rightAlignSpaces+unlockedStr + "\n");
+				addToHistorial( upAndDownStr + "\n");
+
+			}
+		}
 	}
 
 	function handleHelp(argList, argLen)
@@ -176,6 +245,8 @@
 		addToHistorial("\n")
 
 		enableCommand("ls");
+		
+		enableCommand("ls","tab")
 	}
 	
 	function handleLs(argList, argLen)
@@ -195,7 +266,10 @@
 			}
 			printFoldersAtLocation(argPath);
 
-			enableCommand("cd")
+			if( argPath.endsWith(lostAndFoundFolder.name + "/"))
+			{
+				enableCommand("cd")
+			}
 		}
 		else
 		{
@@ -225,7 +299,10 @@
 				path = currentDir.getAbsPath();
 			}
 			
-			enableCommand("mv")
+			if( currentDir.name == "lost+found")
+			{
+				enableCommand("mv")
+			}
 		}
 	}
 	
@@ -339,7 +416,7 @@
 
 		if (currentLocation != undefined)
 		{
-			var dirListing = currentLocation.descendants.map(element =>element.name).filter(e => e.startsWith(filter));
+			var dirListing = currentLocation.getFilterChildNames(filter)
 			dirListing.sort()
 			addToHistorial( dirListing.join("\n") )
 		}
@@ -400,8 +477,7 @@
 	
 	function handleTab(commandLine)
 	{
-		return;
-/*		tabCount = tabCount+1
+		tabCount = tabCount+1
 
 		var args = parseCommand(commandLine)
 		if( args == undefined)
@@ -428,6 +504,7 @@
 					//tab on commands
 					if( tabCount == 1)
 					{
+						//DONE
 						// if (command filter == 1) complete the current command and {tabCount = 0}, else NOPE
 						var commandList = Object.keys(commandData).filter(str => commandData[str].available && str.startsWith(command))
 						if( commandList.length == 1)
@@ -438,6 +515,7 @@
 					}
 					else
 					{
+						//DONE
 						// list all commands filtered
 						var commandList = Object.keys(commandData).filter(str => commandData[str].available && str.startsWith(command))
 						
@@ -453,26 +531,59 @@
 				{
 					if(argsCount <= 2)
 					{
-						var lastArg = argList[argsCount-1]
-						// use the last arg and ...
-						if( tabCount == 1 )
+						if(!commandData[command].enabledTab)
 						{
-							//complete the path (, if so ... also tabCount = 0
-							var currentLocation = findNodeInDataTree(absPath, dataTree)
-
-							if (currentLocation != undefined)
-							{
-								var dirListing = currentLocation.descendants.map(element =>element.name).filter(e => e.startsWith(filter));
+							tabCount = 0;
+							return;
+						}
+						
+						var lastArg = argList[argsCount-1]
+						
+						var lastIndexOfSlash = lastArg.lastIndexOf("/")
+						
+						var argPath = ""
+						var filterStr = ""
+						if(lastIndexOfSlash == -1)
+						{
+							argPath = path
+							filterStr	= lastArg
 						}
 						else
 						{
-							var lastIndexOfSlash = lastArg.lastIndexOf("/")
-							
-							if( lastIndexOfSlash == lastArg.length)
+							argPath = getArgsAbsPath(lastArg.slice(0,lastIndexOfSlash+1))
+							filterStr = lastArg.slice(lastIndexOfSlash+1)
+						}
+						
+						var argFolder = findNodeInDataTree(argPath, dataTree)
+						
+						if( !argFolder )
+						{
+							tabCount = 0
+							return;
+						}
+						
+						var dirListing = argFolder.getFilterChildNames(filterStr);
+
+						// use the last arg and ...
+						if( tabCount == 1 )
+						{
+							//DONE
+							//complete the path (if so ... also tabCount = 0)
+
+							if( dirListing.length == 1)
 							{
-								//list the filtered 
-								printFoldersAtLocation(lastArg)
+								//complete the path
+								linea = linea + dirListing[0].slice(filterStr.length)+"/"
+
+								tabCount = 0
 							}
+
+						}
+						else
+						{
+							//DONE
+							addToHistorial(path +prompt+ linea+"\n")
+							printFoldersAtLocation(argPath, filterStr)
 							tabCount = 0
 						}
 					}
@@ -485,9 +596,9 @@
 			else
 			{
 				// LS on current directory
-				if( tabCount == 2)
+				if( tabCount >= 2)
 				{
-					if( commandData.ls.available )
+					if( commandData.ls.available && commandData.ls.enabledTab)
 					{
 						addToHistorial(path +prompt+ linea+"\n")
 						printFoldersAtLocation(currentDir.getAbsPath())
@@ -495,7 +606,7 @@
 					tabCount = 0
 				}
 			}
-		} */
+		}
 	}
 	
 	function arrayShuffle(array)
@@ -524,7 +635,7 @@
 	{
 		var wordList = arrayShuffle(Object.keys(relations))
 		
-		var currentDir = treeNode
+		var currentDirectory = treeNode
 		var unvisitedNodes = []
 		
 		while( wordList.length != 0 )
@@ -533,9 +644,9 @@
 			var currentWords = wordList.slice(0,wordCount)
 			wordList = wordList.slice(wordCount)
 			
-			currentWords.forEach(word => unvisitedNodes.push( new TreeNode(word, currentDir) ))
+			currentWords.forEach(word => unvisitedNodes.push( new TreeNode(word, currentDirectory) ))
 			
-			currentDir = unvisitedNodes.shift()
+			currentDirectory = unvisitedNodes.shift()
 		}
 	}
 	
